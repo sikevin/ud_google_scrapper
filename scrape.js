@@ -14,7 +14,7 @@ var scrape = async () => {
         var page = await browser.newPage();
 
 /* ////////////// 1. CHANGE THE SITE \\\\\\\\\\\\\\ */
-        await page.goto('https://www.google.com/search?biw=1440&bih=766&ei=-A82XcS0DYeWlwS46qzoAQ&q=site%3Adoctolib.fr+%2B+"%40gmail.com"&oq=site%3Adoctolib.fr+%2B+"%40live.fr"&gs_l=psy-ab.3...5429.5489..5579...0.0..0.68.132.2......0....1..gws-wiz.u1Mkf-bKGMA&ved=0ahUKEwjEkLXposnjAhUHy4UKHTg1Cx0Q4dUDCAo&uact=5');
+        await page.goto('https://www.google.com/search?ei=thY3XcnYLZDylwSkyKi4Cw&q=site%3Adoctolib.fr+%2B+%22%40hotmail.com%22&oq=site%3Adoctolib.fr+%2B+%22%40hotmail.com%22&gs_l=psy-ab.3...10513.12624..13887...1.0..0.47.399.10......0....1..gws-wiz.nRHoMM4IykU&ved=0ahUKEwjJi9iyncvjAhUQ-YUKHSQkCrcQ4dUDCAo&uact=5');
 
         var timeWaitFor = randomIntFromInterval(500, 1500);
         await page.waitFor(timeWaitFor);
@@ -42,10 +42,16 @@ var scrape = async () => {
                     let title = element.children[0].innerText; // Select the title
                     let site = element.children[0].children[0].href // Select URL (full path)
                     let description = element.children[1].innerText; // Select the description
+                    
+                    let email = description.match(/([a-zA-Z0-9._-]+( *@ *| *\[.at\] *| at )+[a-zA-Z0-9._-]+( *)+\.[a-zA-Z0-9._-]+)/gi); // Select only email in description
 
-                    let email = description.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi); // Select only email in description
-
-                    data.push({site, title, email}); // Push in the false data array
+                    var pattern = new RegExp("avis|forum", "i");
+                    var res = pattern.test(title);
+                    //IF CONTAINS AVIS OR FORUM : DO NOT PUSH TO ARRAY
+                    if(res === false || pattern.test(site))
+                    {
+                        data.push({site, title, email}); // Push in the false data array
+                    }
                     
                 }
                 
@@ -87,8 +93,14 @@ var scrape = async () => {
 
                 let email = description.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi); // Select only email in description
 
-                data.push({site, title, email}); // Push in the false data array
-                
+                var pattern = new RegExp("avis|forum", "i");
+                var res = pattern.test(title);
+
+                //IF CONTAINS AVIS OR FORUM : DO NOT PUSH TO ARRAY
+                if(res === false || pattern.test(site))
+                {
+                    data.push({site, title, email}); // Push in the false data array
+                }
             }
             
             return data; // Return our data array
@@ -110,7 +122,7 @@ scrape().then((value) => {
     var fs = require('fs');
 
 /* ////////////// 2. CHANGE THE NAME OF THE JSON \\\\\\\\\\\\\\ */
-    fs.writeFile("scrapping_result/doctolib-gmail-com.json", dictstring, (err) => {
+    fs.writeFile("scrapping_result/test.json", dictstring, (err) => {
         // check if there is error
         if (err) throw err;
     });
