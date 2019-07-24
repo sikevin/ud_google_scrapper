@@ -14,7 +14,7 @@ var scrape = async () => {
         var page = await browser.newPage();
 
 /* ////////////// 1. CHANGE THE SITE \\\\\\\\\\\\\\ */
-        await page.goto('https://www.google.com/search?ei=thY3XcnYLZDylwSkyKi4Cw&q=site%3Adoctolib.fr+%2B+%22%40hotmail.com%22&oq=site%3Adoctolib.fr+%2B+%22%40hotmail.com%22&gs_l=psy-ab.3...10513.12624..13887...1.0..0.47.399.10......0....1..gws-wiz.nRHoMM4IykU&ved=0ahUKEwjJi9iyncvjAhUQ-YUKHSQkCrcQ4dUDCAo&uact=5');
+        await page.goto('https://www.google.com/search?q=site%3Acdiscount.com+%2B+%22%40gmail.com%22&oq=site%3Acdiscount.com+%2B+%22%40gmail.com%22&aqs=chrome.0.69i59j69i58.13088j0j1&sourceid=chrome&ie=UTF-8');
 
         var timeWaitFor = randomIntFromInterval(500, 1500);
         await page.waitFor(timeWaitFor);
@@ -42,13 +42,13 @@ var scrape = async () => {
                     let title = element.children[0].innerText; // Select the title
                     let site = element.children[0].children[0].href // Select URL (full path)
                     let description = element.children[1].innerText; // Select the description
-                    
+
                     let email = description.match(/([a-zA-Z0-9._-]+( *@ *| *\[.at\] *| at )+[a-zA-Z0-9._-]+( *)+\.[a-zA-Z0-9._-]+)/gi); // Select only email in description
 
                     var pattern = new RegExp("avis|forum", "i");
                     var res = pattern.test(title);
                     //IF CONTAINS AVIS OR FORUM : DO NOT PUSH TO ARRAY
-                    if(res === false || pattern.test(site))
+                    if(res === false || pattern.test(site) && email !== null)
                     {
                         data.push({site, title, email}); // Push in the false data array
                     }
@@ -122,7 +122,7 @@ scrape().then((value) => {
     var fs = require('fs');
 
 /* ////////////// 2. CHANGE THE NAME OF THE JSON \\\\\\\\\\\\\\ */
-    fs.writeFile("scrapping_result/test.json", dictstring, (err) => {
+    fs.writeFile("scrapping_result/cdiscount-gmail-com.json", dictstring, (err) => {
         // check if there is error
         if (err) throw err;
     });
